@@ -25,4 +25,4 @@ def help():
     lp=os.path.dirname(__file__)
     path=os.path.join(lp,'WIN','LP_XMLConverter.exe','help')
     out = sub.check_output([path])
-    return {"result": out}
+    return {"result": out[0:50]}
