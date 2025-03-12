@@ -21,7 +21,7 @@ def run_lpx():
     out = sub.check_output([path])
     return {"result": out}
 @app.get("/help")
-def run_lpx():
+def help():
     lp=os.path.dirname(__file__)
     path=os.path.join(lp,'WIN','LP_XMLConverter.exe','help')
     out = sub.check_output([path])
