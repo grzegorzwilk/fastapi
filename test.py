@@ -18,6 +18,7 @@ try:
         text=True,
         check=True
     )
+    print (result)
 except subprocess.CalledProcessError as e:
     print(f"Exit code: {e.returncode}")
     print(f"stdout: {e.stdout}")
