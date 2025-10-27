@@ -17,12 +17,12 @@ def read_root():
 @app.get("/lpx")
 def run_lpx():
     lp=os.path.dirname(__file__)
-    path=os.path.join(lp,'WIN','LP_XMLConverter.exe')
-    out = sub.check_output([path])
+    path=os.path.join(lp,'LP','LP_XMLConverter.exe')
+    out = sub.check_output(['wine',path])
     return {"result": out}
 @app.get("/help")
 def help():
     lp=os.path.dirname(__file__)
-    path=os.path.join(lp,'WIN','LP_XMLConverter.exe','help')
-    out = sub.check_output([path])
+    path=os.path.join(lp,'LP','LP_XMLConverter.exe','help')
+    out = sub.check_output(['wine',path])
     return {"result": out[0:50]}
