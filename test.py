@@ -1,4 +1,4 @@
 import subprocess as sub 
 
-o = sub.check_output(['wine'])
+o = sub.check_output(['wine','--help'])
 print (o)
