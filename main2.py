@@ -6,16 +6,27 @@ import tempfile
 import platform
 
 lp=os.path.dirname(__file__)
-def isWindows():
-    if platform.system() == "Windows":
-        return True
+
+
+DARWIN  = 0
+WINDOWS = 1
+LINUX   = 2
+def whatPlatform():
     if platform.system() == "Darwin":
-        return False
+        return DARWIN
+    if platform.system() == "Windows":
+        return WINDOWS
+    if platform.system() == "Linux":
+        return LINUX
 def converter_path():
     lp=os.path.dirname(__file__)
-    if isWindows():
+    if whatPlatform()==WINDOWS:
         path=os.path.join(lp,'WIN','LP_XMLConverter.exe')    
-    else:
+    if whatPlatform()==LINUX:
+        lp=os.path.dirname(lp)
+        path=os.path.join(lp,'LP','LP_XMLConverter.exe')    
+    
+    if whatPlatform()==DARWIN:
         path=os.path.join(lp,'OSX','MakeGDLLib_X86','LP_XMLConverter.app','Contents','MacOS','LP_XMLConverter')
     return path 
 
@@ -34,11 +45,15 @@ def read_root():
 
 @app.get("/lpx")
 def run_lpx():
-    out = sub.check_output([CONVERTER_PATH])
+    _command = [CONVERTER_PATH]
+    if whatPlatform()==LINUX:_command.insert(0,'wine')
+    out = sub.check_output(_command)
     return {"result": out}
 @app.get("/help")
 def run_lpx_help():
-    out = sub.check_output([CONVERTER_PATH,'help'])
+    _command = [CONVERTER_PATH,'help']
+    if whatPlatform()==LINUX:_command.insert(0,'wine')
+    out = sub.check_output(_command)
     return {"result": out}
 
 
@@ -93,8 +108,9 @@ async def xml2lp(
     # lp=os.path.dirname(lp)
     # path=os.path.join(lp,'LP','LP_XMLConverter.exe')
     
+
     command = [CONVERTER_PATH, 'xml2libpart']
-    
+    if whatPlatform()==LINUX: command.insert(0,'wine')
     if lang:
         command.extend(['-l', lang])
     if img:
