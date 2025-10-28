@@ -5,7 +5,9 @@ import os
 import tempfile
 import platform
 
+#dest temp filder
 lp=os.path.dirname(__file__)
+folder_up=os.path.dirname(lp)
 
 
 DARWIN  = 0
@@ -98,7 +100,7 @@ async def xml2lp(
     # Create temporary destination file if not provided
     temp_dest = None
     if dest:
-        actual_dest = dest
+        actual_dest = os.path.join(folder_up,dest)
     else:
         with tempfile.NamedTemporaryFile(delete=False, suffix='.gsm') as tmp_dest:
             actual_dest = tmp_dest.name
