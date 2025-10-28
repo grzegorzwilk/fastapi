@@ -4,10 +4,16 @@ import subprocess as sub
 import os
 import tempfile
 import platform
+import uuid
 
-#dest temp filder
+#dest temp folder
 lp=os.path.dirname(__file__)
 folder_up=os.path.dirname(lp)
+TMP_FOLDER = os.path.join(lp, 'TMP')
+GSM_FOLDER = os.path.join(lp, 'GSM')
+# Create folders if they don't exist
+os.makedirs(TMP_FOLDER, exist_ok=True)
+os.makedirs(GSM_FOLDER, exist_ok=True)
 
 
 DARWIN  = 0
@@ -86,11 +92,13 @@ async def xml2lp(
     # Handle file upload
     temp_source = None
     if source_file:
-        # Save uploaded file to temporary location
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.xml') as tmp_file:
+        # Save uploaded file to TMP folder
+        filename = f"{uuid.uuid4()}.xml"
+        filepath = os.path.join(TMP_FOLDER, filename)
+        with open(filepath, 'wb') as f:
             content = await source_file.read()
-            tmp_file.write(content)
-            temp_source = tmp_file.name
+            f.write(content)
+        temp_source = filepath
         actual_source = temp_source
     elif source:
         actual_source = source
@@ -100,10 +108,12 @@ async def xml2lp(
     # Create temporary destination file if not provided
     temp_dest = None
     if dest:
-        actual_dest = os.path.join(folder_up,dest)
+        # Save destination file to GSM folder
+        actual_dest = os.path.join(GSM_FOLDER, dest)
     else:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.gsm') as tmp_dest:
-            actual_dest = tmp_dest.name
+        # Generate unique filename in GSM folder
+        filename = f"{uuid.uuid4()}.gsm"
+        actual_dest = os.path.join(GSM_FOLDER, filename)
         temp_dest = actual_dest
     
     # lp=os.path.dirname(__file__)

@@ -1,0 +1,1686 @@
+<Symbol IsArchivable="false" IsPlaceable="true" MainGUID="A688F70B-4A4A-374E-B758-007D35055E5A" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="45">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="false">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["funkcje"]]></MName>
+		<MainGUID>5E70AA03-9A8C-2C4C-AF3C-49688AC39115</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+
+
+
+
+
+
+
+
+dim _orientacja[],_orientacja2[]
+_orientacja[1] = 0.0
+_orientacja[2] = 90.0
+
+! _orientacja2[1] = 0.0
+! _orientacja2[2] = 90.0
+
+rotx _orientacja[orientacja]
+    ! rotz _orientacja2[orientacja2]
+    ! add -szerokosc/2,-wysokosc/2,-szerokosc/2
+
+    UnID = 1
+    pen 1
+    hotspot 0,0,0,UnID:UnID=UnID+1
+    material "white"
+    block a,b,zzyzx
+    z_pos = zzyzx+.001
+    add A/2,B/2, z_pos
+        ! material 'black'
+        style 'opis3D'
+        if bShowText3D then 
+        _t = row[LP]+' '+row[NR_NAZWA_SHORT]
+        text 0,0,_t
+        ! text 0,0,show_id[show]
+        endif 
+    del 1
+    addz z_pos
+        PICTURE stLP, a, b, 1
+    del 1
+del 1
+
+
+! rotx 90
+! addz 0.001
+! PICTURE stLP, a, b, 1
+! del 2
+
+
+
+
+
+
+
+
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+
+
+
+
+
+unID = 1
+
+hotspot2 0,0, unID:unID=unID+1
+hotspot2 a,0, unID:unID=unID+1
+if orientacja = 1 then 
+hotspot2 a,b, unID:unID=unID+1
+hotspot2 0,b, unID:unID=unID+1
+endif 
+if orientacja = 2 then 
+hotspot2 a,-zzyzx, unID:unID=unID+1
+hotspot2 0,-zzyzx, unID:unID=unID+1
+endif 
+hotline2 0,0,a,0,unID:unID=unID+1
+hotline2 a,0,a,b,unID:unID=unID+1
+hotline2 a,b,0,b,unID:unID=unID+1
+hotline2 0,0,0,b,unID:unID=unID+1
+
+! gosub "cover_fill"
+
+add2 x,y
+rot2 orientacja2
+drawindex 20
+pen 1
+if bShowText2D then 
+RECT2 0,0,a+picW,b+picH
+picture2 stLP, a+picW, b+picH, 4
+endif 
+del 2
+drawindex 10
+project2 3, 270, 3
+"HPT": 		!-------------------------------------------------------------------------------- HPT		
+	! rot2 orientacja2
+	if bShowText2D then 
+	id = 0
+	HOTSPOT2 x, 0, id, y, BASE_L: id = id + 1
+	
+	HOTSPOT2 x, y, id, y, MOVING_L : id = id + 1
+	
+	HOTSPOT2 x, -0.1, id, y, REFERENCE_L : id = id + 1
+	
+	
+	HOTSPOT2 0, y, id, x, BASE_L : id = id + 1
+	
+	HOTSPOT2 x, y, id, x, MOVING_L : id = id + 1
+	
+	HOTSPOT2 -0.1, y, id, x, REFERENCE_L : id = id + 1
+
+
+	! pic size
+
+	!id = 0
+	HOTSPOT2 x+ A+picW, y+B, id, picH, BASE_L: id = id + 1
+	
+	HOTSPOT2 x+A+picW, y+B+picH, id, picH, MOVING_L : id = id + 1
+	
+	HOTSPOT2 x+A+picW, y+B-0.1, id, picH, REFERENCE_L : id = id + 1
+	
+	
+	HOTSPOT2 x+A, y+b+picH, id, picW, BASE_L : id = id + 1
+	! HOTSPOT2 x+A+picW, y+b+picH, id, picW, BASE_L : id = id + 1
+	
+	HOTSPOT2 x+A+picW, y+b+picH, id, picW, MOVING_L : id = id + 1
+	
+	HOTSPOT2 x+A-0.1, y+b+picH, id, picW, REFERENCE_L : id = id + 1
+	! del 1
+	endif 
+"HPT_END": 	!-------------------------------------------------------------------------------- HPT_END		
+end 
+
+"cover_fill":
+
+! ------------ POLY2_ FUNCTION -----------
+j1 = 0 ! draw contour,
+j2 = 1 ! draw fill,
+j3 = 1 ! close an open polygon,
+j4 = 0 ! local fill orientation,
+j6 = 0 ! fill is cut fill (default is drafting fill),
+j7 = 0 ! fill is cover fill (only if j6 = 0, default is drafting fill).
+
+frame_fill = j1 + 2*j2 + 4*j3 + 8*j4 + 32*j6 + 64*j7
+
+
+! -----------------------------
+! fill_type = 64
+fill fill_type
+pen fill_pen
+POLY2_ 		4, frame_fill,
+			0,0,1,
+			a,0,1,
+			a,b,1,
+			0,b,1
+! ----------POLY2_ FUNCTIONEND --------
+
+return 
+
+
+
+
+
+
+
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+
+
+
+
+
+
+parameters ver = '0.1.251009'
+
+"labels": 		!-------------------------------------------------------------------------------- labels		
+	_INWENT = 1
+	_AUTOR = 3
+	! _TYTUL = 4
+	_WYS = 4
+	_SZER =5
+	_GR = 6
+	_URLFOTO =7
+	_NR_POM =8
+	_NR_GABLOTY =9
+	_KATEGORIA =10
+	_UWAGI =11
+	
+	i=1
+	LP 				= i:i=i+1
+	NR_INWENTARZOWY = i:i=i+1
+	NR_NAZWA_SHORT 	= i:i=i+1
+	NR_NAZWA 		= i:i=i+1
+	DLUGOSC			= i:i=i+1
+	SZEROKOSC		= i:i=i+1
+	WYSOKOSC		= i:i=i+1
+	EKSPOZYTOR		= i:i=i+1
+	SALA		    = i:i=i+1
+
+	!---- HOTSPOT TYPES --
+	
+	!---- LENGTH ---------
+	BASE_L			=	1
+	MOVING_L		=	2
+	REFERENCE_L		=	3
+	
+	! ----- ANGLE --------
+	BASE_A			=	4
+	MOVING_A		=	5
+	CENTER_A		=	6
+	REFERENCE_A		=	7
+	! ------- END --------
+	
+"labels_END": 	!-------------------------------------------------------------------------------- labels_END		
+
+"attributes": 		!-------------------------------------------------------------------------------- attributes		
+	
+	!________ "Opis" STYLE DEFINITION ____________
+	
+	
+	j1 	= 0 	!bold,
+	j2 	= 0 	!italic,
+	j3	= 0 	!underline
+	
+	s_name 		= 	"Opis" 
+	font_family =	"Helvetica"
+	size		=	fontSize
+	anchor 		=	1
+	face_code	= 	j1 + 2*j2 + 4*j3
+	
+	!________ DEFINE STYLE FUNCTION  ____________________________
+	
+	DEFINE STYLE s_name font_family, size, anchor, face_code
+	
+	MATE 	= 2
+	METAL 	= 3
+	PLASTIC = 4
+	GLASS 	= 5
+	GLOWING = 6
+	CONSTANT= 7
+	
+	DEFINE MATERIAL 'black' 	MATE, 
+					0,
+					0,
+					0
+	DEFINE MATERIAL 'white' 	MATE, 
+					1.0,
+					1.0,
+					1.0
+
+	!________ "Style name" STYLE DEFINITION ____________
+	
+	
+	j1 	= 0 	!bold,
+	j2 	= 0 	!italic,
+	j3	= 0 	!underline
+	
+	s_name 		= 	"opis3d" 
+	font_family =	"Helvetica"
+	size		=	50
+	anchor 		=	5
+	face_code	= 	j1 + 2*j2 + 4*j3
+	
+	!________ DEFINE STYLE FUNCTION  ____________________________
+	
+	DEFINE STYLE s_name font_family, size, anchor, face_code
+	
+	!________ END OF "Style name" STYLE DEFINITION  ____________________________
+	!________ END OF "Opis" STYLE DEFINITION  ____________________________
+"attributes_END": 	!-------------------------------------------------------------------------------- attributes_END		
+values{2} 'orientacja', 1,'Poziom',2,'Pion'
+values{2} 'orientacja2', 0,'Poziom',90,'90-Prawo',270,`90-Lewo`
+"dane_load": 		!-------------------------------------------------------------------------------- dane_load		
+	call 'funkcje' parameters 		funkcja 	= 	'fileReader',
+									fileName	=	file,
+									separator 	=	separator,
+									rtrn 		= 	1
+				
+	_n = 2 
+	_d  =''
+	nn=SPLIT(glob_id, '%s %n',_d, _n)
+	if vartype(_d) = 1 then _n = _d			
+	dim row[]
+	t= ''
+	for i = 1 to vardim2(dane) 
+	row[i] = dane[_n+1][i]
+	t = t+row[i]+'\n'
+	next i
+	if bShowText3D then 
+		style 'opis'
+		text2 0,0,row[LP]+' '+row[NR_NAZWA_SHORT]+' '+row[EKSPOZYTOR]
+	endif 
+
+	stLP  = str(_n,1,0)
+	parameters stLP = stLP
+	parameters stNr_inwent = row[NR_INWENTARZOWY]
+	parameters stNazwa = row[NR_NAZWA]
+ 
+ 	_val = row[DLUGOSC]
+ 	_res = ''
+ 	! if strlen(_val)>6 then  gosub "clear"
+
+
+	NN = SPLIT(row[DLUGOSC],'%^n',_dlugosc)
+	! NN = SPLIT(_res,'%n',_dlugosc)
+	_dlugosc = _dlugosc/1000
+	
+	! print vartype(row[DLUGOSC]),vartype(_dlugosc)
+	
+	parameters dWidth = _dlugosc,A = _dlugosc
+ ! 	_val = row[SZEROKOSC]
+ ! 	_res = ''
+ 	! if strlen(_val)>6 then  gosub "clear"
+	! NN = SPLIT(_res,'%n',_szerokosc)
+	NN = SPLIT(row[SZEROKOSC],'%^n',_szerokosc)
+	_szerokosc = _szerokosc/1000
+	parameters dDepth = _szerokosc,B = _szerokosc
+
+	! _val = row[WYSOKOSC]
+ ! 	_res = ''
+ 	! if strlen(_val)>6 then  gosub "clear"
+	NN = SPLIT(row[WYSOKOSC],'%^n',_wysokosc)
+	! NN = SPLIT(_res,'%n',_wysokosc)
+	_wysokosc = _wysokosc/1000
+	parameters dHeight = _wysokosc,zzyzx = _wysokosc
+
+	! NN = SPLIT(row[_WYS],'%n',wysokosc)
+	! wysokosc = wysokosc/1000
+	! parameters wysokosc = wysokosc
+! 	parameters B = wysokosc
+
+! 	NN = SPLIT(row[_GR],'%n',grubosc)
+! 	grubosc = grubosc/1000
+! 	parameters grubosc = grubosc
+! 	parameters zzyzx = grubosc
+
+! 	_pom = row[_NR_POM]
+! 	parameters nr_pomieszczenia = _pom
+	
+! !	_gab = row[_NR_GABLOTY]
+! !	parameters nr_gabloty = _gab
+
+! 	_kat = row[_KATEGORIA]
+! 	parameters kategoria = _kat
+
+! 	_uwa = row[_UWAGI]
+! 	parameters uwagi = _uwa
+	
+
+
+
+! "dane_load_END": 	!-------------------------------------------------------------------------------- dane_load_END		
+
+
+! "draw_symbol": 		!-------------------------------------------------------------------------------- draw_symbol		
+! 	! ------------------------- DEFINICJA PROSTOKĄTA -----------------------------!
+	
+! 	_szerokosc = szerokosc
+! 	dim _wysokosc[]
+! 	_wysokosc[1] = wysokosc
+! 	_wysokosc[2] = grubosc
+! 	DIM symbol[][2]
+
+! 	! punkt 1
+! 	symbol[1][1] = 	-_szerokosc/2
+! 	symbol[1][2] =	-_wysokosc[orientacja]/2
+! 	! punkt 2
+! 	symbol[2][1] =	_szerokosc/2
+! 	symbol[2][2] = 	-_wysokosc[orientacja]/2
+! 	!punkt 3
+! 	symbol[3][1] =	_szerokosc/2
+! 	symbol[3][2] =	_wysokosc[orientacja]/2
+! 	!punkt 4
+! 	symbol[4][1] =	-_szerokosc/2
+! 	symbol[4][2] =	_wysokosc[orientacja]/2
+! 	! -------------------------END OF  DEFINICJA PROSTOKĄTA ----------------------!	
+! "draw_symbol_END": 	!-------------------------------------------------------------------------------- draw_symbol_END		
+
+! "show": 		!-------------------------------------------------------------------------------- show		
+! 	dim opis[],iOpis[]
+! 		! opis[1] = `ID`
+! 		! opis[2] = `Kategoria`
+! 		! opis[3] = `Wszystkie`
+! 		opis[1] = `ID`
+! 		opis[2] = `Nr inwentarza`
+! 		opis[3] = `Nr pomieszczenia`
+! 		opis[4] = `Kategoria`
+! 		opis[5] = `Tytuł`
+! 		opis[6] = `Uwagi`
+! 		opis[7] = `Wszystkie`
+! 		len = vardim1(opis)
+! for i = 1 to len
+! 	iOpis[i] = i 
+! next i
+! 	dim show_id[]
+! 		! show_id[1] = prefix+glob_id
+! 		! show_id[2] = kategoria
+! 		show_id[1] = glob_id
+! 		show_id[2] = nr_inwent
+! 		show_id[3] = nr_pomieszczenia
+! 		show_id[4] = kategoria
+! 		show_id[5] = autor
+! 		show_id[6] = uwagi
+! 		_sh=''
+! 		for i = 1 to vardim1(show_id)
+! 			_sh = _sh+show_id[i]+'\n'
+! 		next i 
+! 		show_id[len] = _sh
+! values{2} "show" iopis,opis
+! "show_END": 	!-------------------------------------------------------------------------------- show_END			
+
+! endif 
+gosub 999
+! "clear":
+
+!  	for i = 1 to strlen(_val)
+!  		if i<>2 then _res = _res + strsub(_val,i,1)
+!  	next i 
+	
+! return
+999:
+
+
+
+
+
+
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+
+
+DIALOG_WIDTH =  444
+
+ui_dialog 'Ustawienia obiektu eksponatu'
+
+
+
+
+fileID = '164aD62yeGdmBckwm59XKRD8Gpan-X2CtSZF9b1XLIk4'
+url = 'https://docs.google.com/spreadsheets/d/'+fileID+'/export?format=tsv'
+! UI_BUTTON 	UI_LINK,	!UI_PREV, UI_NEXT, UI_FUNCTION, UI_LINK 
+! 			'Pobierz bazę danych', 
+! 			10, 
+! 			10, 
+! 			140, 
+! 			30, 
+! 			1, 
+! 			url
+
+
+dict param:i=1
+     param.desc[i] = `stLP`
+     param.name[i] = "stLP"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stNr_inwent`
+     param.name[i] = "stNr_inwent"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stNazwa`
+     param.name[i] = "stNazwa"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `dWidth`
+     param.name[i] = "dWidth"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `dDepth`
+     param.name[i] = "dDepth"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `dHeight`
+     param.name[i] = "dHeight"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stRoom`
+     param.name[i] = "stRoom"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stEkspozytorName`
+     param.name[i] = "stEkspozytorName"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stEkspozytorNr`
+     param.name[i] = "stEkspozytorNr"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `stDescription`
+     param.name[i] = "stDescription"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+
+
+dict ui
+     ui.ml = 5 
+     ui.mt = 5 
+     ui.mr = 5 
+     ui.mb = 5 
+     ui.width = 444
+     ui.height = 260
+     ui.th = 15
+     ui.ofw = 100
+     ui.ifw = 100
+     ui.colspan = 5 
+     ui.rowspan = 5
+     ui.line = ui.th+ui.rowspan
+
+ui_style 1, 0
+UI_OUTFIELD "Ver: " + ver, DIALOG_WIDTH - 120, 255, 117, 13, 5
+
+block_x = 0
+block_y = 0
+gosub 'content'
+
+
+dict param:i=1
+     param.desc[i] = `Show Text`
+     param.name[i] = "bShowText3D"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+      param.desc[i] = `Show image`
+     param.name[i] = "bShowText2D"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `Orientacja`
+     param.name[i] = "orientacja"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `Orientacja 2D`
+     param.name[i] = "orientacja2"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `2D Detail`
+     param.name[i] = "i2D_Detail"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+     param.desc[i] = `3D Detail`
+     param.name[i] = "i3D_Detail"
+     param.tip[i]  = `tip text`
+     param.flag[i]  = 0
+     param.fit[i]  = 0
+     i=i+1
+block_x = ui.ofw + ui.ifw + ui.colspan * 3
+block_y = 0
+gosub 'content'
+
+end 
+"content":
+        UI_STYLE 1,0
+
+        FOR j = 0 TO VARDIM1(param.desc) - 1 
+
+            ! textLine = padd * marginY + j * (fieldHeight + lineSpace)
+            textLine = ui.mt + j *ui.line
+            
+            if param.desc[j+1]#'' then
+            __w = ui.ofw
+            if param.fit[j+1] then __w = strlen(param.desc[j+1])*5
+            UI_OUTFIELD  param.desc[j+1], 
+                        ui.ml+block_x,
+                        textLine+block_y, 
+                        __w, 
+                        ui.ifw,
+                         param.flag[j+1] ui_tooltip  param.tip[j+1]
+            endif 
+            if param.name[j+1]#'' then 
+            UI_INFIELD   param.name[j+1], 
+                        block_x + ui.ml+__w + ui.colspan,
+                        block_y + textline, 
+                        ui.ifw, 
+                        ui.th ui_tooltip param.tip[j+1]
+            endif 
+            
+        NEXT j
+return
+
+
+
+
+
+
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+dim _i2D_Detail[],_st2D_Detail[]:i=1
+_st2D_Detail[i] = `Simple`:i=i+1
+_st2D_Detail[i] = `Projection`:i=i+1
+_st2D_Detail[i] = `by MVO`:i=i+1
+for i = 1 to vardim1(_st2D_Detail)
+    _i2D_Detail[i] = i
+next i 
+values{2} 'i2D_Detail' _i2D_Detail,_st2D_Detail
+
+dim _i3D_Detail[],_st3D_Detail[]:i=1
+_st3D_Detail[i] = `Box`:i=i+1
+_st3D_Detail[i] = `Model`:i=i+1
+_st3D_Detail[i] = `by MVO`:i=i+1
+for i = 1 to vardim1(_st3D_Detail)
+    _i3D_Detail[i] = i
+next i 
+values{2} 'i3D_Detail' _i3D_Detail,_st3D_Detail
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Script_BWM>
+
+<ParamSection SectVersion="27" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<AutoHotspots>false</AutoHotspots>
+		<StatBits>
+			<STBit_UIDefault/>
+			<STBit_FixSize/>
+			<STBit_UIUseHierarchicalPages/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+	</ParamSectHeader>
+	<Parameters>
+		<String Name="ver">
+			<Description><![CDATA[""]]></Description>
+			<Value><![CDATA["0.1.251009"]]></Value>
+		</String>
+		<Length Name="A">
+			<Description><![CDATA["Wymiar 1"]]></Description>
+			<Fix/>
+			<Value>2.65</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Wymiar 2"]]></Description>
+			<Fix/>
+			<Value>1.63</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Wysokość"]]></Description>
+			<Fix/>
+			<Value>1.62</Value>
+		</Length>
+
+		<!-- obiekty_ac_B: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="obiekty_ac_B">
+			<Description><![CDATA["Parametry"]]></Description>
+		</Title>
+		<FillPattern Name="fill_type">
+			<Description><![CDATA[""]]></Description>
+			<Value>24</Value>
+		</FillPattern>
+		<PenColor Name="fill_pen">
+			<Description><![CDATA[""]]></Description>
+			<Value>102</Value>
+		</PenColor>
+		<Integer Name="i2D_detail">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="i3D_detail">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="show">
+			<Description><![CDATA["Opis"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+		<String Name="separator">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[";"]]></Value>
+		</String>
+		<Boolean Name="bShowSymbol">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="orientacja">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Integer Name="orientacja2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<String Name="file">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["wap-obiekty-obiekty.csv"]]></Value>
+		</String>
+		<RealNum Name="fontSize">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.5</Value>
+		</RealNum>
+		<String Name="prefix">
+			<Description><![CDATA["Prefix"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Boolean Name="bShowText3D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+        <Boolean Name="bShowText2D">
+            <Description><![CDATA[""]]></Description>
+            <Flags>
+                <ParFlg_Child/>
+            </Flags>
+            <Value>1</Value>
+        </Boolean>
+		<String Name="dane">
+			<Description><![CDATA["dane"]]></Description>
+			<ArrayValues FirstDimension="75" SecondDimension="9">
+				<AVal Column="1" Row="1"><![CDATA["L.P"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["NR INWENTARZOWY"]]></AVal>
+				<AVal Column="3" Row="1"><![CDATA["NAZWA SHORT"]]></AVal>
+				<AVal Column="4" Row="1"><![CDATA["TYTUŁ/NAZWA"]]></AVal>
+				<AVal Column="5" Row="1"><![CDATA["Długość"]]></AVal>
+				<AVal Column="6" Row="1"><![CDATA["Szerokość"]]></AVal>
+				<AVal Column="7" Row="1"><![CDATA["Wysokość"]]></AVal>
+				<AVal Column="8" Row="1"><![CDATA["RODZAJ EKSPOZYTORA"]]></AVal>
+				<AVal Column="9" Row="1"><![CDATA["MIEJSCE EKSPOZYCJI"]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["1,00"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA["-"]]></AVal>
+				<AVal Column="3" Row="2"><![CDATA["Powóz"]]></AVal>
+				<AVal Column="4" Row="2"><![CDATA["Powóz Diuk"]]></AVal>
+				<AVal Column="5" Row="2"><![CDATA["3 050,00"]]></AVal>
+				<AVal Column="6" Row="2"><![CDATA["1 800,00"]]></AVal>
+				<AVal Column="7" Row="2"><![CDATA["1 950,00"]]></AVal>
+				<AVal Column="8" Row="2"><![CDATA["na drewnianych podkładkach (?)"]]></AVal>
+				<AVal Column="9" Row="2"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA["2,00"]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA["-"]]></AVal>
+				<AVal Column="3" Row="3"><![CDATA["Powóz"]]></AVal>
+				<AVal Column="4" Row="3"><![CDATA["Powóz Phaeton duński"]]></AVal>
+				<AVal Column="5" Row="3"><![CDATA["2 650,00"]]></AVal>
+				<AVal Column="6" Row="3"><![CDATA["1 630,00"]]></AVal>
+				<AVal Column="7" Row="3"><![CDATA["1 620,00"]]></AVal>
+				<AVal Column="8" Row="3"><![CDATA["na drewnianych podkładkach (?)"]]></AVal>
+				<AVal Column="9" Row="3"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="4"><![CDATA["3,00"]]></AVal>
+				<AVal Column="2" Row="4"><![CDATA["MSiT/8132/M"]]></AVal>
+				<AVal Column="3" Row="4"><![CDATA["Sanki"]]></AVal>
+				<AVal Column="4" Row="4"><![CDATA["Sanki dziecięce"]]></AVal>
+				<AVal Column="5" Row="4"><![CDATA["1 310,00"]]></AVal>
+				<AVal Column="6" Row="4"><![CDATA["470,00"]]></AVal>
+				<AVal Column="7" Row="4"><![CDATA["790,00"]]></AVal>
+				<AVal Column="8" Row="4"><![CDATA["postument lub podkładki pod same płozy"]]></AVal>
+				<AVal Column="9" Row="4"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="5"><![CDATA["4,00"]]></AVal>
+				<AVal Column="2" Row="5"><![CDATA["MSiT/15037/M"]]></AVal>
+				<AVal Column="3" Row="5"><![CDATA["Sanki"]]></AVal>
+				<AVal Column="4" Row="5"><![CDATA["Sanki dziecięce"]]></AVal>
+				<AVal Column="5" Row="5"><![CDATA["1 170,00"]]></AVal>
+				<AVal Column="6" Row="5"><![CDATA["415,00"]]></AVal>
+				<AVal Column="7" Row="5"><![CDATA["805,00"]]></AVal>
+				<AVal Column="8" Row="5"><![CDATA["postument lub podkładki pod same płozy"]]></AVal>
+				<AVal Column="9" Row="5"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="6"><![CDATA["5,00"]]></AVal>
+				<AVal Column="2" Row="6"><![CDATA["-"]]></AVal>
+				<AVal Column="3" Row="6"><![CDATA["Sanki"]]></AVal>
+				<AVal Column="4" Row="6"><![CDATA["Sanie wyjazdowe"]]></AVal>
+				<AVal Column="5" Row="6"><![CDATA["2 700,00"]]></AVal>
+				<AVal Column="6" Row="6"><![CDATA["1 450,00"]]></AVal>
+				<AVal Column="7" Row="6"><![CDATA["1 250,00"]]></AVal>
+				<AVal Column="8" Row="6"><![CDATA["na drewnianych podkładkach pod płozy (?)"]]></AVal>
+				<AVal Column="9" Row="6"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="7"><![CDATA["6,00"]]></AVal>
+				<AVal Column="2" Row="7"><![CDATA["MŁJ0IV0581"]]></AVal>
+				<AVal Column="3" Row="7"><![CDATA["Chomąto"]]></AVal>
+				<AVal Column="4" Row="7"><![CDATA["Chomąto z uprzęży w stylu krakowskim  typ podhalański"]]></AVal>
+				<AVal Column="5" Row="7"><![CDATA["430,00"]]></AVal>
+				<AVal Column="6" Row="7"><![CDATA["830,00"]]></AVal>
+				<AVal Column="7" Row="7"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="7"><![CDATA["wieszak na listwie"]]></AVal>
+				<AVal Column="9" Row="7"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="8"><![CDATA["7,00"]]></AVal>
+				<AVal Column="2" Row="8"><![CDATA["MŁJ0IV0689"]]></AVal>
+				<AVal Column="3" Row="8"><![CDATA["Chomąto"]]></AVal>
+				<AVal Column="4" Row="8"><![CDATA["Chomąto z uprzęży w stylu śląskim"]]></AVal>
+				<AVal Column="5" Row="8"><![CDATA["340,00"]]></AVal>
+				<AVal Column="6" Row="8"><![CDATA["640,00"]]></AVal>
+				<AVal Column="7" Row="8"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="8"><![CDATA["wieszak na listwie"]]></AVal>
+				<AVal Column="9" Row="8"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="9"><![CDATA["8,00"]]></AVal>
+				<AVal Column="2" Row="9"><![CDATA["MŁJ0IV0211/1"]]></AVal>
+				<AVal Column="3" Row="9"><![CDATA["Siodło"]]></AVal>
+				<AVal Column="4" Row="9"><![CDATA["Siodło"]]></AVal>
+				<AVal Column="5" Row="9"><![CDATA["800,00"]]></AVal>
+				<AVal Column="6" Row="9"><![CDATA["600,00"]]></AVal>
+				<AVal Column="7" Row="9"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="9"><![CDATA["wieszak na listwie kobyłka  może być na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="9"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="10"><![CDATA["9,00"]]></AVal>
+				<AVal Column="2" Row="10"><![CDATA["MŁJ0IV0707"]]></AVal>
+				<AVal Column="3" Row="10"><![CDATA["Siodło"]]></AVal>
+				<AVal Column="4" Row="10"><![CDATA["Siodło cywilne"]]></AVal>
+				<AVal Column="5" Row="10"><![CDATA["800,00"]]></AVal>
+				<AVal Column="6" Row="10"><![CDATA["600,00"]]></AVal>
+				<AVal Column="7" Row="10"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="10"><![CDATA["wieszak na listwie kobyłka  może być na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="10"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="11"><![CDATA["10,00"]]></AVal>
+				<AVal Column="2" Row="11"><![CDATA["MSiT/2211/M"]]></AVal>
+				<AVal Column="3" Row="11"><![CDATA["Siodło"]]></AVal>
+				<AVal Column="4" Row="11"><![CDATA["Siodło ujeżdżeniowe  angielskie"]]></AVal>
+				<AVal Column="5" Row="11"><![CDATA["630,00"]]></AVal>
+				<AVal Column="6" Row="11"><![CDATA["500,00"]]></AVal>
+				<AVal Column="7" Row="11"><![CDATA["740,00"]]></AVal>
+				<AVal Column="8" Row="11"><![CDATA["stojak: kobyłka/kozioł lub wieszak na listwie"]]></AVal>
+				<AVal Column="9" Row="11"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="12"><![CDATA["11,00"]]></AVal>
+				<AVal Column="2" Row="12"><![CDATA["MŁiJ0IV0517"]]></AVal>
+				<AVal Column="3" Row="12"><![CDATA["Wieszak na S."]]></AVal>
+				<AVal Column="4" Row="12"><![CDATA["Wieszak na siodło "]]></AVal>
+				<AVal Column="5" Row="12"><![CDATA["480,00"]]></AVal>
+				<AVal Column="6" Row="12"><![CDATA["405,00"]]></AVal>
+				<AVal Column="7" Row="12"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="12"><![CDATA["wieszak na listwie mocowany do ściany 0 na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="12"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="13"><![CDATA["12,00"]]></AVal>
+				<AVal Column="2" Row="13"><![CDATA["MŁiJ0IV0664"]]></AVal>
+				<AVal Column="3" Row="13"><![CDATA["Wieszak na S."]]></AVal>
+				<AVal Column="4" Row="13"><![CDATA["Wieszak na siodło "]]></AVal>
+				<AVal Column="5" Row="13"><![CDATA["480,00"]]></AVal>
+				<AVal Column="6" Row="13"><![CDATA["320,00"]]></AVal>
+				<AVal Column="7" Row="13"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="13"><![CDATA["wieszak na listwie mocowany do ściany 0 na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="13"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="14"><![CDATA["13,00"]]></AVal>
+				<AVal Column="2" Row="14"><![CDATA["MŁiJ0IV0518"]]></AVal>
+				<AVal Column="3" Row="14"><![CDATA["Wieszak na U."]]></AVal>
+				<AVal Column="4" Row="14"><![CDATA["Wieszak na uprząż"]]></AVal>
+				<AVal Column="5" Row="14"><![CDATA["157,00"]]></AVal>
+				<AVal Column="6" Row="14"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="14"><![CDATA["100,00"]]></AVal>
+				<AVal Column="8" Row="14"><![CDATA["wieszak na listwie mocowany do ściany 0 na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="14"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="15"><![CDATA["14,00"]]></AVal>
+				<AVal Column="2" Row="15"><![CDATA["MŁJ0IV0403"]]></AVal>
+				<AVal Column="3" Row="15"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="15"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="15"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="15"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="15"><![CDATA["750,00"]]></AVal>
+				<AVal Column="8" Row="15"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="15"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="16"><![CDATA["15,00"]]></AVal>
+				<AVal Column="2" Row="16"><![CDATA["MŁJ0IV0499"]]></AVal>
+				<AVal Column="3" Row="16"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="16"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="16"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="16"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="16"><![CDATA["350,00"]]></AVal>
+				<AVal Column="8" Row="16"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="16"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="17"><![CDATA["16,00"]]></AVal>
+				<AVal Column="2" Row="17"><![CDATA["MŁJ0IV0731"]]></AVal>
+				<AVal Column="3" Row="17"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="17"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="17"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="17"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="17"><![CDATA["450,00"]]></AVal>
+				<AVal Column="8" Row="17"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="17"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="18"><![CDATA["17,00"]]></AVal>
+				<AVal Column="2" Row="18"><![CDATA["MŁJ0IV0733"]]></AVal>
+				<AVal Column="3" Row="18"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="18"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="18"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="18"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="18"><![CDATA["470,00"]]></AVal>
+				<AVal Column="8" Row="18"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="18"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="19"><![CDATA["18,00"]]></AVal>
+				<AVal Column="2" Row="19"><![CDATA["MŁJ0IV0787"]]></AVal>
+				<AVal Column="3" Row="19"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="19"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="19"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="19"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="19"><![CDATA["570,00"]]></AVal>
+				<AVal Column="8" Row="19"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="19"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="20"><![CDATA["19,00"]]></AVal>
+				<AVal Column="2" Row="20"><![CDATA["MŁJ0IV095"]]></AVal>
+				<AVal Column="3" Row="20"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="20"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="20"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="20"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="20"><![CDATA["450,00"]]></AVal>
+				<AVal Column="8" Row="20"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="20"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="21"><![CDATA["20,00"]]></AVal>
+				<AVal Column="2" Row="21"><![CDATA["MŁJ0IV0725"]]></AVal>
+				<AVal Column="3" Row="21"><![CDATA["Latarnia"]]></AVal>
+				<AVal Column="4" Row="21"><![CDATA["Latarnia powozowa"]]></AVal>
+				<AVal Column="5" Row="21"><![CDATA["100,00"]]></AVal>
+				<AVal Column="6" Row="21"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="21"><![CDATA["480,00"]]></AVal>
+				<AVal Column="8" Row="21"><![CDATA["listwa z otworem"]]></AVal>
+				<AVal Column="9" Row="21"><![CDATA["sala 1"]]></AVal>
+				<AVal Column="1" Row="22"><![CDATA["21,00"]]></AVal>
+				<AVal Column="2" Row="22"><![CDATA["MNG/MTS/500"]]></AVal>
+				<AVal Column="3" Row="22"><![CDATA["Sanie"]]></AVal>
+				<AVal Column="4" Row="22"><![CDATA["Sanie reprezentacyjne XVIII0wieczne"]]></AVal>
+				<AVal Column="5" Row="22"><![CDATA["2 450,00"]]></AVal>
+				<AVal Column="6" Row="22"><![CDATA["1 200,00"]]></AVal>
+				<AVal Column="7" Row="22"><![CDATA["1 070,00"]]></AVal>
+				<AVal Column="8" Row="22"><![CDATA["postument"]]></AVal>
+				<AVal Column="9" Row="22"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="23"><![CDATA["22,00"]]></AVal>
+				<AVal Column="2" Row="23"><![CDATA["MSiT/em2488401"]]></AVal>
+				<AVal Column="3" Row="23"><![CDATA["Sanki"]]></AVal>
+				<AVal Column="4" Row="23"><![CDATA["Sanki dziecięce  drewniane  polichromowane "]]></AVal>
+				<AVal Column="5" Row="23"><![CDATA["820,00"]]></AVal>
+				<AVal Column="6" Row="23"><![CDATA["510,00"]]></AVal>
+				<AVal Column="7" Row="23"><![CDATA["480,00"]]></AVal>
+				<AVal Column="8" Row="23"><![CDATA["gablota (lub postument?)"]]></AVal>
+				<AVal Column="9" Row="23"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="24"><![CDATA["23,00"]]></AVal>
+				<AVal Column="2" Row="24"><![CDATA["MSiT/7270/M"]]></AVal>
+				<AVal Column="3" Row="24"><![CDATA["Zegar"]]></AVal>
+				<AVal Column="4" Row="24"><![CDATA["Zegar powozowy"]]></AVal>
+				<AVal Column="5" Row="24"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="24"><![CDATA["140,00"]]></AVal>
+				<AVal Column="7" Row="24"><![CDATA["200,00"]]></AVal>
+				<AVal Column="8" Row="24"><![CDATA["gablota zegarki"]]></AVal>
+				<AVal Column="9" Row="24"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="25"><![CDATA["24,00"]]></AVal>
+				<AVal Column="2" Row="25"><![CDATA["MNG/MTS/195"]]></AVal>
+				<AVal Column="3" Row="25"><![CDATA["Zegar"]]></AVal>
+				<AVal Column="4" Row="25"><![CDATA["Zegarek podróżny  tzw. Kareciak"]]></AVal>
+				<AVal Column="5" Row="25"><![CDATA["23,00"]]></AVal>
+				<AVal Column="6" Row="25"><![CDATA["39,00"]]></AVal>
+				<AVal Column="7" Row="25"><![CDATA["52,00"]]></AVal>
+				<AVal Column="8" Row="25"><![CDATA["gablota zegarki"]]></AVal>
+				<AVal Column="9" Row="25"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="26"><![CDATA["25,00"]]></AVal>
+				<AVal Column="2" Row="26"><![CDATA["MNG/MTS/196"]]></AVal>
+				<AVal Column="3" Row="26"><![CDATA["Zegar"]]></AVal>
+				<AVal Column="4" Row="26"><![CDATA["Zegarek podróżny  tzw. Kareciak"]]></AVal>
+				<AVal Column="5" Row="26"><![CDATA["54,00"]]></AVal>
+				<AVal Column="6" Row="26"><![CDATA["63,00"]]></AVal>
+				<AVal Column="7" Row="26"><![CDATA["92,00"]]></AVal>
+				<AVal Column="8" Row="26"><![CDATA["gablota zegarki"]]></AVal>
+				<AVal Column="9" Row="26"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="27"><![CDATA["26,00"]]></AVal>
+				<AVal Column="2" Row="27"><![CDATA["MNG/MTS/497"]]></AVal>
+				<AVal Column="3" Row="27"><![CDATA["Zegar"]]></AVal>
+				<AVal Column="4" Row="27"><![CDATA["Zegar podróżny srebrny  firmy John Grinsell & Sons  Londyn"]]></AVal>
+				<AVal Column="5" Row="27"><![CDATA["74,00"]]></AVal>
+				<AVal Column="6" Row="27"><![CDATA["74,00"]]></AVal>
+				<AVal Column="7" Row="27"><![CDATA["86,00"]]></AVal>
+				<AVal Column="8" Row="27"><![CDATA["gablota zegarki"]]></AVal>
+				<AVal Column="9" Row="27"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="28"><![CDATA["27,00"]]></AVal>
+				<AVal Column="2" Row="28"><![CDATA["MNG/MTS/494/1054"]]></AVal>
+				<AVal Column="3" Row="28"><![CDATA["Kufer"]]></AVal>
+				<AVal Column="4" Row="28"><![CDATA["Kufer podróżny  toaletowy"]]></AVal>
+				<AVal Column="5" Row="28"><![CDATA["470,00"]]></AVal>
+				<AVal Column="6" Row="28"><![CDATA["270,00"]]></AVal>
+				<AVal Column="7" Row="28"><![CDATA["255,00"]]></AVal>
+				<AVal Column="8" Row="28"><![CDATA["gablota indywidualna"]]></AVal>
+				<AVal Column="9" Row="28"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="29"><![CDATA["28,00"]]></AVal>
+				<AVal Column="2" Row="29"><![CDATA["MNG/MTS/398"]]></AVal>
+				<AVal Column="3" Row="29"><![CDATA["Neseser "]]></AVal>
+				<AVal Column="4" Row="29"><![CDATA["Neseser podróżny do manicure"]]></AVal>
+				<AVal Column="5" Row="29"><![CDATA["200,00"]]></AVal>
+				<AVal Column="6" Row="29"><![CDATA["255,00"]]></AVal>
+				<AVal Column="7" Row="29"><![CDATA["50,00"]]></AVal>
+				<AVal Column="8" Row="29"><![CDATA["gablota nesesery"]]></AVal>
+				<AVal Column="9" Row="29"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="30"><![CDATA["29,00"]]></AVal>
+				<AVal Column="2" Row="30"><![CDATA["MNG/MTS/399/1011"]]></AVal>
+				<AVal Column="3" Row="30"><![CDATA["Neseser "]]></AVal>
+				<AVal Column="4" Row="30"><![CDATA["Neseser toaletowy"]]></AVal>
+				<AVal Column="5" Row="30"><![CDATA["470,00"]]></AVal>
+				<AVal Column="6" Row="30"><![CDATA["270,00"]]></AVal>
+				<AVal Column="7" Row="30"><![CDATA["255,00"]]></AVal>
+				<AVal Column="8" Row="30"><![CDATA["gablota nesesery"]]></AVal>
+				<AVal Column="9" Row="30"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="31"><![CDATA["30,00"]]></AVal>
+				<AVal Column="2" Row="31"><![CDATA["MNG/MTS/495/1012"]]></AVal>
+				<AVal Column="3" Row="31"><![CDATA["Neseser "]]></AVal>
+				<AVal Column="4" Row="31"><![CDATA["Neseser podróżny z palisandru  firmy Fitzmaurice West"]]></AVal>
+				<AVal Column="5" Row="31"><![CDATA["338,00"]]></AVal>
+				<AVal Column="6" Row="31"><![CDATA["242,00"]]></AVal>
+				<AVal Column="7" Row="31"><![CDATA["148,00"]]></AVal>
+				<AVal Column="8" Row="31"><![CDATA["gablota nesesery"]]></AVal>
+				<AVal Column="9" Row="31"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="32"><![CDATA["31,00"]]></AVal>
+				<AVal Column="2" Row="32"><![CDATA["MNG/MTS/400/1010"]]></AVal>
+				<AVal Column="3" Row="32"><![CDATA["Neseser "]]></AVal>
+				<AVal Column="4" Row="32"><![CDATA["Neseser toaletowy"]]></AVal>
+				<AVal Column="5" Row="32"><![CDATA["450,00"]]></AVal>
+				<AVal Column="6" Row="32"><![CDATA["270,00"]]></AVal>
+				<AVal Column="7" Row="32"><![CDATA["125,00"]]></AVal>
+				<AVal Column="8" Row="32"><![CDATA["gablota nesesery"]]></AVal>
+				<AVal Column="9" Row="32"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="33"><![CDATA["32,00"]]></AVal>
+				<AVal Column="2" Row="33"><![CDATA["MSiT/8228/M"]]></AVal>
+				<AVal Column="3" Row="33"><![CDATA["Sepet"]]></AVal>
+				<AVal Column="4" Row="33"><![CDATA["Sepet inkrustowany "]]></AVal>
+				<AVal Column="5" Row="33"><![CDATA["252,00"]]></AVal>
+				<AVal Column="6" Row="33"><![CDATA["415,00"]]></AVal>
+				<AVal Column="7" Row="33"><![CDATA["380,00"]]></AVal>
+				<AVal Column="8" Row="33"><![CDATA["gablota sekretarzyki"]]></AVal>
+				<AVal Column="9" Row="33"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="34"><![CDATA["33,00"]]></AVal>
+				<AVal Column="2" Row="34"><![CDATA["MSiT/7510/M"]]></AVal>
+				<AVal Column="3" Row="34"><![CDATA["Biureczko"]]></AVal>
+				<AVal Column="4" Row="34"><![CDATA["Biureczko podróżne "]]></AVal>
+				<AVal Column="5" Row="34"><![CDATA["257,00"]]></AVal>
+				<AVal Column="6" Row="34"><![CDATA["332,00"]]></AVal>
+				<AVal Column="7" Row="34"><![CDATA["115,00"]]></AVal>
+				<AVal Column="8" Row="34"><![CDATA["gablota sekretarzyki"]]></AVal>
+				<AVal Column="9" Row="34"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="35"><![CDATA["34,00"]]></AVal>
+				<AVal Column="2" Row="35"><![CDATA["MSiT/7511/M"]]></AVal>
+				<AVal Column="3" Row="35"><![CDATA["Biureczko"]]></AVal>
+				<AVal Column="4" Row="35"><![CDATA["Biureczko intarsjowane "]]></AVal>
+				<AVal Column="5" Row="35"><![CDATA["385,00"]]></AVal>
+				<AVal Column="6" Row="35"><![CDATA["560,00"]]></AVal>
+				<AVal Column="7" Row="35"><![CDATA["50,00"]]></AVal>
+				<AVal Column="8" Row="35"><![CDATA["gablota sekretarzyki"]]></AVal>
+				<AVal Column="9" Row="35"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="36"><![CDATA["35,00"]]></AVal>
+				<AVal Column="2" Row="36"><![CDATA["MSiT/4954"]]></AVal>
+				<AVal Column="3" Row="36"><![CDATA["Torba"]]></AVal>
+				<AVal Column="4" Row="36"><![CDATA["Torba skórzana "]]></AVal>
+				<AVal Column="5" Row="36"><![CDATA["457,00"]]></AVal>
+				<AVal Column="6" Row="36"><![CDATA["227,00"]]></AVal>
+				<AVal Column="7" Row="36"><![CDATA["250,00"]]></AVal>
+				<AVal Column="8" Row="36"><![CDATA["gablota varia"]]></AVal>
+				<AVal Column="9" Row="36"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="37"><![CDATA["36,00"]]></AVal>
+				<AVal Column="2" Row="37"><![CDATA["MNG/MTS/492/104"]]></AVal>
+				<AVal Column="3" Row="37"><![CDATA["Zestaw"]]></AVal>
+				<AVal Column="4" Row="37"><![CDATA["Zestaw podróżny z butelkami na alkohole "]]></AVal>
+				<AVal Column="5" Row="37"><![CDATA["133,00"]]></AVal>
+				<AVal Column="6" Row="37"><![CDATA["235,00"]]></AVal>
+				<AVal Column="7" Row="37"><![CDATA["220,00"]]></AVal>
+				<AVal Column="8" Row="37"><![CDATA["gablota varia"]]></AVal>
+				<AVal Column="9" Row="37"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="38"><![CDATA["37,00"]]></AVal>
+				<AVal Column="2" Row="38"><![CDATA["MŁiJ0IV01077"]]></AVal>
+				<AVal Column="3" Row="38"><![CDATA["Kufer"]]></AVal>
+				<AVal Column="4" Row="38"><![CDATA["Kufer podróżny  przystosowany do mocowania na pojeździe konnym"]]></AVal>
+				<AVal Column="5" Row="38"><![CDATA["700,00"]]></AVal>
+				<AVal Column="6" Row="38"><![CDATA["400,00"]]></AVal>
+				<AVal Column="7" Row="38"><![CDATA["250,00"]]></AVal>
+				<AVal Column="8" Row="38"><![CDATA["gablota varia"]]></AVal>
+				<AVal Column="9" Row="38"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="39"><![CDATA["38,00"]]></AVal>
+				<AVal Column="2" Row="39"><![CDATA["MSiT/7519/M"]]></AVal>
+				<AVal Column="3" Row="39"><![CDATA["Laska"]]></AVal>
+				<AVal Column="4" Row="39"><![CDATA["Laska kij sękaty"]]></AVal>
+				<AVal Column="5" Row="39"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="39"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="39"><![CDATA["890,00"]]></AVal>
+				<AVal Column="8" Row="39"><![CDATA["gablota"]]></AVal>
+				<AVal Column="9" Row="39"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="40"><![CDATA["39,00"]]></AVal>
+				<AVal Column="2" Row="40"><![CDATA["MSiT/7521/M"]]></AVal>
+				<AVal Column="3" Row="40"><![CDATA["Laska"]]></AVal>
+				<AVal Column="4" Row="40"><![CDATA["Laska z głową jelenia"]]></AVal>
+				<AVal Column="5" Row="40"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="40"><![CDATA["120,00"]]></AVal>
+				<AVal Column="7" Row="40"><![CDATA["890,00"]]></AVal>
+				<AVal Column="8" Row="40"><![CDATA["gablota"]]></AVal>
+				<AVal Column="9" Row="40"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="41"><![CDATA["40,00"]]></AVal>
+				<AVal Column="2" Row="41"><![CDATA["MSiT/7528"]]></AVal>
+				<AVal Column="3" Row="41"><![CDATA["Laska"]]></AVal>
+				<AVal Column="4" Row="41"><![CDATA["Laska z niklowaną rączką"]]></AVal>
+				<AVal Column="5" Row="41"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="41"><![CDATA["115,00"]]></AVal>
+				<AVal Column="7" Row="41"><![CDATA["880,00"]]></AVal>
+				<AVal Column="8" Row="41"><![CDATA["gablota"]]></AVal>
+				<AVal Column="9" Row="41"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="42"><![CDATA["41,00"]]></AVal>
+				<AVal Column="2" Row="42"><![CDATA["MSiT/7531/M"]]></AVal>
+				<AVal Column="3" Row="42"><![CDATA["Laska"]]></AVal>
+				<AVal Column="4" Row="42"><![CDATA["Laska ze skórzaną plecionką"]]></AVal>
+				<AVal Column="5" Row="42"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="42"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="42"><![CDATA["890,00"]]></AVal>
+				<AVal Column="8" Row="42"><![CDATA["gablota"]]></AVal>
+				<AVal Column="9" Row="42"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="43"><![CDATA["42,00"]]></AVal>
+				<AVal Column="2" Row="43"><![CDATA["MNG/MTS/464"]]></AVal>
+				<AVal Column="3" Row="43"><![CDATA["Laska"]]></AVal>
+				<AVal Column="4" Row="43"><![CDATA["Laska dekorowana reliefem o motywie łowieckim"]]></AVal>
+				<AVal Column="5" Row="43"><![CDATA["30,00"]]></AVal>
+				<AVal Column="6" Row="43"><![CDATA["93,00"]]></AVal>
+				<AVal Column="7" Row="43"><![CDATA["865,00"]]></AVal>
+				<AVal Column="8" Row="43"><![CDATA["gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="43"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="44"><![CDATA["43,00"]]></AVal>
+				<AVal Column="2" Row="44"><![CDATA["MSiT/22196/M"]]></AVal>
+				<AVal Column="3" Row="44"><![CDATA["Krokiet"]]></AVal>
+				<AVal Column="4" Row="44"><![CDATA["Zestaw do gry w krokieta "]]></AVal>
+				<AVal Column="5" Row="44"><![CDATA["1 000,00"]]></AVal>
+				<AVal Column="6" Row="44"><![CDATA["265,00"]]></AVal>
+				<AVal Column="7" Row="44"><![CDATA["180,00"]]></AVal>
+				<AVal Column="8" Row="44"><![CDATA["półka  regał lub gablota varia lub postument z kuframi"]]></AVal>
+				<AVal Column="9" Row="44"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="45"><![CDATA["44,00"]]></AVal>
+				<AVal Column="2" Row="45"><![CDATA["MNG/MTS/491/103"]]></AVal>
+				<AVal Column="3" Row="45"><![CDATA["Cylinder"]]></AVal>
+				<AVal Column="4" Row="45"><![CDATA["Cylinder w skórzanym etui "]]></AVal>
+				<AVal Column="5" Row="45"><![CDATA["350,00"]]></AVal>
+				<AVal Column="6" Row="45"><![CDATA["380,00"]]></AVal>
+				<AVal Column="7" Row="45"><![CDATA["280,00"]]></AVal>
+				<AVal Column="8" Row="45"><![CDATA["gablota kapelusze lub stroje"]]></AVal>
+				<AVal Column="9" Row="45"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="46"><![CDATA["45,00"]]></AVal>
+				<AVal Column="2" Row="46"><![CDATA["MNG/MTS/493/103"]]></AVal>
+				<AVal Column="3" Row="46"><![CDATA["Cylinder"]]></AVal>
+				<AVal Column="4" Row="46"><![CDATA["Cylinder w stożkowym etui"]]></AVal>
+				<AVal Column="5" Row="46"><![CDATA["330,00"]]></AVal>
+				<AVal Column="6" Row="46"><![CDATA["295,00"]]></AVal>
+				<AVal Column="7" Row="46"><![CDATA["430,00"]]></AVal>
+				<AVal Column="8" Row="46"><![CDATA["gablota kapelusze lub stroje"]]></AVal>
+				<AVal Column="9" Row="46"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="47"><![CDATA["46,00"]]></AVal>
+				<AVal Column="2" Row="47"><![CDATA["MSiT/11763/M"]]></AVal>
+				<AVal Column="3" Row="47"><![CDATA["Pudło"]]></AVal>
+				<AVal Column="4" Row="47"><![CDATA["Pudło skórzane na kapelusze"]]></AVal>
+				<AVal Column="5" Row="47"><![CDATA["407,00"]]></AVal>
+				<AVal Column="6" Row="47"><![CDATA["425,00"]]></AVal>
+				<AVal Column="7" Row="47"><![CDATA["275,00"]]></AVal>
+				<AVal Column="8" Row="47"><![CDATA["gablota kapelusze lub stroje"]]></AVal>
+				<AVal Column="9" Row="47"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="48"><![CDATA["47,00"]]></AVal>
+				<AVal Column="2" Row="48"><![CDATA["MŁiJ0IV01259"]]></AVal>
+				<AVal Column="3" Row="48"><![CDATA["Kufer"]]></AVal>
+				<AVal Column="4" Row="48"><![CDATA["Kufer na kapelusze "]]></AVal>
+				<AVal Column="5" Row="48"><![CDATA["400,00"]]></AVal>
+				<AVal Column="6" Row="48"><![CDATA["250,00"]]></AVal>
+				<AVal Column="7" Row="48"><![CDATA["400,00"]]></AVal>
+				<AVal Column="8" Row="48"><![CDATA["gablota (wspólna ze strojem do jazdy konnej) gablota kapelusze lub stroje"]]></AVal>
+				<AVal Column="9" Row="48"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="49"><![CDATA["48,00"]]></AVal>
+				<AVal Column="2" Row="49"><![CDATA["MNG/SD/8900895  100501006/MT"]]></AVal>
+				<AVal Column="3" Row="49"><![CDATA["Uprzaż"]]></AVal>
+				<AVal Column="4" Row="49"><![CDATA["Uprząż reprezentacyjna z XVIII w."]]></AVal>
+				<AVal Column="5" Row="49"><![CDATA["800,00"]]></AVal>
+				<AVal Column="6" Row="49"><![CDATA["800,00"]]></AVal>
+				<AVal Column="7" Row="49"><![CDATA["100,00"]]></AVal>
+				<AVal Column="8" Row="49"><![CDATA["kobyłka"]]></AVal>
+				<AVal Column="9" Row="49"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="50"><![CDATA["49,00"]]></AVal>
+				<AVal Column="2" Row="50"><![CDATA["MŁJ0IV01136"]]></AVal>
+				<AVal Column="3" Row="50"><![CDATA["Ogłowie"]]></AVal>
+				<AVal Column="4" Row="50"><![CDATA["Ogłowie"]]></AVal>
+				<AVal Column="5" Row="50"><![CDATA["1 180,00"]]></AVal>
+				<AVal Column="6" Row="50"><![CDATA["1 050,00"]]></AVal>
+				<AVal Column="7" Row="50"><![CDATA["80,00"]]></AVal>
+				<AVal Column="8" Row="50"><![CDATA["kozioł lub kołek  wieszak 0 na zewnątrz"]]></AVal>
+				<AVal Column="9" Row="50"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="51"><![CDATA["50,00"]]></AVal>
+				<AVal Column="2" Row="51"><![CDATA["MSiT/8976/2"]]></AVal>
+				<AVal Column="3" Row="51"><![CDATA["Buńczuk"]]></AVal>
+				<AVal Column="4" Row="51"><![CDATA["Buńczuk podgardłowy "]]></AVal>
+				<AVal Column="5" Row="51"><![CDATA["500,00"]]></AVal>
+				<AVal Column="6" Row="51"><![CDATA["500,00"]]></AVal>
+				<AVal Column="7" Row="51"><![CDATA["40,00"]]></AVal>
+				<AVal Column="8" Row="51"><![CDATA["gablota jeździectwo"]]></AVal>
+				<AVal Column="9" Row="51"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="52"><![CDATA["51,00"]]></AVal>
+				<AVal Column="2" Row="52"><![CDATA["MSiT/8976/1"]]></AVal>
+				<AVal Column="3" Row="52"><![CDATA["Ogłowie"]]></AVal>
+				<AVal Column="4" Row="52"><![CDATA["Ogłowie wraz z kiełznem i alsbantem"]]></AVal>
+				<AVal Column="5" Row="52"><![CDATA["1 000,00"]]></AVal>
+				<AVal Column="6" Row="52"><![CDATA["1 000,00"]]></AVal>
+				<AVal Column="7" Row="52"><![CDATA["40,00"]]></AVal>
+				<AVal Column="8" Row="52"><![CDATA["gablota  jeździectwo"]]></AVal>
+				<AVal Column="9" Row="52"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="53"><![CDATA["52,00"]]></AVal>
+				<AVal Column="2" Row="53"><![CDATA["MLJ0IV0719"]]></AVal>
+				<AVal Column="3" Row="53"><![CDATA["Czaprak"]]></AVal>
+				<AVal Column="4" Row="53"><![CDATA["Czaprak paradny turecki "]]></AVal>
+				<AVal Column="5" Row="53"><![CDATA["1 180,00"]]></AVal>
+				<AVal Column="6" Row="53"><![CDATA["1 050,00"]]></AVal>
+				<AVal Column="7" Row="53"><![CDATA["700,00"]]></AVal>
+				<AVal Column="8" Row="53"><![CDATA["gablota  jeździectwo  na koźle"]]></AVal>
+				<AVal Column="9" Row="53"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="54"><![CDATA["53,00"]]></AVal>
+				<AVal Column="2" Row="54"><![CDATA["MLJ0IV0653/102"]]></AVal>
+				<AVal Column="3" Row="54"><![CDATA["Czaprak"]]></AVal>
+				<AVal Column="4" Row="54"><![CDATA["Czaprak"]]></AVal>
+				<AVal Column="5" Row="54"><![CDATA["850,00"]]></AVal>
+				<AVal Column="6" Row="54"><![CDATA["850,00"]]></AVal>
+				<AVal Column="7" Row="54"><![CDATA["700,00"]]></AVal>
+				<AVal Column="8" Row="54"><![CDATA["gablota  jeździectwo"]]></AVal>
+				<AVal Column="9" Row="54"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="55"><![CDATA["54,00"]]></AVal>
+				<AVal Column="2" Row="55"><![CDATA["MŁJ0IV0???"]]></AVal>
+				<AVal Column="3" Row="55"><![CDATA["Siodło"]]></AVal>
+				<AVal Column="4" Row="55"><![CDATA["Siodło cywilne"]]></AVal>
+				<AVal Column="5" Row="55"><![CDATA["540,00"]]></AVal>
+				<AVal Column="6" Row="55"><![CDATA["540,00"]]></AVal>
+				<AVal Column="7" Row="55"><![CDATA["700,00"]]></AVal>
+				<AVal Column="8" Row="55"><![CDATA["gablota  jeździectwo"]]></AVal>
+				<AVal Column="9" Row="55"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="56"><![CDATA["55,00"]]></AVal>
+				<AVal Column="2" Row="56"><![CDATA["MŁJ0IV01091"]]></AVal>
+				<AVal Column="3" Row="56"><![CDATA["Spodnie"]]></AVal>
+				<AVal Column="4" Row="56"><![CDATA["Spodnie"]]></AVal>
+				<AVal Column="5" Row="56"><![CDATA["400,00"]]></AVal>
+				<AVal Column="6" Row="56"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="56"><![CDATA["880,00"]]></AVal>
+				<AVal Column="8" Row="56"><![CDATA["gablota stroje (razem z pozostałymi akcesoriami do jeździectwa)"]]></AVal>
+				<AVal Column="9" Row="56"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="57"><![CDATA["56,00"]]></AVal>
+				<AVal Column="2" Row="57"><![CDATA["MSiT/1011/M"]]></AVal>
+				<AVal Column="3" Row="57"><![CDATA["Bryczesy "]]></AVal>
+				<AVal Column="4" Row="57"><![CDATA["Bryczesy "]]></AVal>
+				<AVal Column="5" Row="57"><![CDATA["380,00"]]></AVal>
+				<AVal Column="6" Row="57"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="57"><![CDATA["930,00"]]></AVal>
+				<AVal Column="8" Row="57"><![CDATA["gablota stroje (wspólna z butami i toczkiem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="57"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="58"><![CDATA["57,00"]]></AVal>
+				<AVal Column="2" Row="58"><![CDATA["MSiT/2465/M"]]></AVal>
+				<AVal Column="3" Row="58"><![CDATA["Fraczek"]]></AVal>
+				<AVal Column="4" Row="58"><![CDATA["Fraczek czerwony do jazdy konnej"]]></AVal>
+				<AVal Column="5" Row="58"><![CDATA["670,00"]]></AVal>
+				<AVal Column="6" Row="58"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="58"><![CDATA["910,00"]]></AVal>
+				<AVal Column="8" Row="58"><![CDATA["gablota stroje (wspólna z butami i toczkiem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="58"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="59"><![CDATA["58,00"]]></AVal>
+				<AVal Column="2" Row="59"><![CDATA["MŁJ0IV0332"]]></AVal>
+				<AVal Column="3" Row="59"><![CDATA["Bryczesy"]]></AVal>
+				<AVal Column="4" Row="59"><![CDATA["Bryczesy"]]></AVal>
+				<AVal Column="5" Row="59"><![CDATA["400,00"]]></AVal>
+				<AVal Column="6" Row="59"><![CDATA["100,00"]]></AVal>
+				<AVal Column="7" Row="59"><![CDATA["1 000,00"]]></AVal>
+				<AVal Column="8" Row="59"><![CDATA["gablota stroje (razem z pozostałymi akcesoriami do jeździectwa)"]]></AVal>
+				<AVal Column="9" Row="59"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="60"><![CDATA["59,00"]]></AVal>
+				<AVal Column="2" Row="60"><![CDATA["MŁJ0IV01256"]]></AVal>
+				<AVal Column="3" Row="60"><![CDATA["Toczek"]]></AVal>
+				<AVal Column="4" Row="60"><![CDATA["Toczek"]]></AVal>
+				<AVal Column="5" Row="60"><![CDATA["260,00"]]></AVal>
+				<AVal Column="6" Row="60"><![CDATA["260,00"]]></AVal>
+				<AVal Column="7" Row="60"><![CDATA["200,00"]]></AVal>
+				<AVal Column="8" Row="60"><![CDATA["gablota stroje (razem z pozostałymi akcesoriami do jeździectwa)"]]></AVal>
+				<AVal Column="9" Row="60"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="61"><![CDATA["60,00"]]></AVal>
+				<AVal Column="2" Row="61"><![CDATA["MSiT/2210/M"]]></AVal>
+				<AVal Column="3" Row="61"><![CDATA["Toczek"]]></AVal>
+				<AVal Column="4" Row="61"><![CDATA["Toczek  Londyn"]]></AVal>
+				<AVal Column="5" Row="61"><![CDATA["195,00"]]></AVal>
+				<AVal Column="6" Row="61"><![CDATA["270,00"]]></AVal>
+				<AVal Column="7" Row="61"><![CDATA["160,00"]]></AVal>
+				<AVal Column="8" Row="61"><![CDATA["gablota stroje (wspólna ze strojem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="61"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="62"><![CDATA["61,00"]]></AVal>
+				<AVal Column="2" Row="62"><![CDATA["MSiT/2207/M"]]></AVal>
+				<AVal Column="3" Row="62"><![CDATA["Buty"]]></AVal>
+				<AVal Column="4" Row="62"><![CDATA["Buty do jazdy konnej"]]></AVal>
+				<AVal Column="5" Row="62"><![CDATA["110,00"]]></AVal>
+				<AVal Column="6" Row="62"><![CDATA["270,00"]]></AVal>
+				<AVal Column="7" Row="62"><![CDATA["420,00"]]></AVal>
+				<AVal Column="8" Row="62"><![CDATA["gablota stroje (wspólna ze strojem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="62"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="63"><![CDATA["62,00"]]></AVal>
+				<AVal Column="2" Row="63"><![CDATA["MŁiJ0IV011070104"]]></AVal>
+				<AVal Column="3" Row="63"><![CDATA["Buty"]]></AVal>
+				<AVal Column="4" Row="63"><![CDATA["Buty"]]></AVal>
+				<AVal Column="5" Row="63"><![CDATA["110,00"]]></AVal>
+				<AVal Column="6" Row="63"><![CDATA["295,00"]]></AVal>
+				<AVal Column="7" Row="63"><![CDATA["423,00"]]></AVal>
+				<AVal Column="8" Row="63"><![CDATA["gablota stroje (z kompletem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="63"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="64"><![CDATA["63,00"]]></AVal>
+				<AVal Column="2" Row="64"><![CDATA["MŁiJ0IV0710"]]></AVal>
+				<AVal Column="3" Row="64"><![CDATA["Sztylpy"]]></AVal>
+				<AVal Column="4" Row="64"><![CDATA["Sztylpy (ochrona łydek  używane do krótkich butów)"]]></AVal>
+				<AVal Column="5" Row="64"><![CDATA["200,00"]]></AVal>
+				<AVal Column="6" Row="64"><![CDATA["200,00"]]></AVal>
+				<AVal Column="7" Row="64"><![CDATA["325,00"]]></AVal>
+				<AVal Column="8" Row="64"><![CDATA["gablota stroje (z kompletem do jazdy konnej)"]]></AVal>
+				<AVal Column="9" Row="64"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="65"><![CDATA["64,00"]]></AVal>
+				<AVal Column="2" Row="65"><![CDATA["MŁiJ0IV0660"]]></AVal>
+				<AVal Column="3" Row="65"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="65"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="5" Row="65"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="65"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="65"><![CDATA["680,00"]]></AVal>
+				<AVal Column="8" Row="65"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="65"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="66"><![CDATA["65,00"]]></AVal>
+				<AVal Column="2" Row="66"><![CDATA["MŁiJ0IV0243"]]></AVal>
+				<AVal Column="3" Row="66"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="66"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="5" Row="66"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="66"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="66"><![CDATA["860,00"]]></AVal>
+				<AVal Column="8" Row="66"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="66"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="67"><![CDATA["66,00"]]></AVal>
+				<AVal Column="2" Row="67"><![CDATA["MŁiJ0IV0193"]]></AVal>
+				<AVal Column="3" Row="67"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="67"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="5" Row="67"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="67"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="67"><![CDATA["860,00"]]></AVal>
+				<AVal Column="8" Row="67"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="67"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="68"><![CDATA["67,00"]]></AVal>
+				<AVal Column="2" Row="68"><![CDATA["MŁiJ0IV0326"]]></AVal>
+				<AVal Column="3" Row="68"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="68"><![CDATA["Palcat  bat jeździecki"]]></AVal>
+				<AVal Column="5" Row="68"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="68"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="68"><![CDATA["810,00"]]></AVal>
+				<AVal Column="8" Row="68"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="68"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="69"><![CDATA["68,00"]]></AVal>
+				<AVal Column="2" Row="69"><![CDATA["MŁiJ0IV0663"]]></AVal>
+				<AVal Column="3" Row="69"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="69"><![CDATA["Palcat  bat jeździecki"]]></AVal>
+				<AVal Column="5" Row="69"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="69"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="69"><![CDATA["630,00"]]></AVal>
+				<AVal Column="8" Row="69"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="69"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="70"><![CDATA["69,00"]]></AVal>
+				<AVal Column="2" Row="70"><![CDATA["MŁiJ0IV0501"]]></AVal>
+				<AVal Column="3" Row="70"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="4" Row="70"><![CDATA["Palcat"]]></AVal>
+				<AVal Column="5" Row="70"><![CDATA["40,00"]]></AVal>
+				<AVal Column="6" Row="70"><![CDATA["40,00"]]></AVal>
+				<AVal Column="7" Row="70"><![CDATA["655,00"]]></AVal>
+				<AVal Column="8" Row="70"><![CDATA["stojak  poza zasięgiem rąk gablota laski palcaty"]]></AVal>
+				<AVal Column="9" Row="70"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="71"><![CDATA["70,00"]]></AVal>
+				<AVal Column="2" Row="71"><![CDATA["MNG/MTS/229"]]></AVal>
+				<AVal Column="3" Row="71"><![CDATA["Kufer"]]></AVal>
+				<AVal Column="4" Row="71"><![CDATA["Kufer posagowy "]]></AVal>
+				<AVal Column="5" Row="71"><![CDATA["1 210,00"]]></AVal>
+				<AVal Column="6" Row="71"><![CDATA["600,00"]]></AVal>
+				<AVal Column="7" Row="71"><![CDATA["795,00"]]></AVal>
+				<AVal Column="8" Row="71"><![CDATA["postument"]]></AVal>
+				<AVal Column="9" Row="71"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="72"><![CDATA["71,00"]]></AVal>
+				<AVal Column="2" Row="72"><![CDATA["MNG/SD/166/Mb"]]></AVal>
+				<AVal Column="3" Row="72"><![CDATA["Skrzynia"]]></AVal>
+				<AVal Column="4" Row="72"><![CDATA["Skrzynia"]]></AVal>
+				<AVal Column="5" Row="72"><![CDATA["1 220,00"]]></AVal>
+				<AVal Column="6" Row="72"><![CDATA["520,00"]]></AVal>
+				<AVal Column="7" Row="72"><![CDATA["880,00"]]></AVal>
+				<AVal Column="8" Row="72"><![CDATA["postument"]]></AVal>
+				<AVal Column="9" Row="72"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="73"><![CDATA["72,00"]]></AVal>
+				<AVal Column="2" Row="73"><![CDATA["MSiT/4854/M"]]></AVal>
+				<AVal Column="3" Row="73"><![CDATA["Skrzynia"]]></AVal>
+				<AVal Column="4" Row="73"><![CDATA["Skrzynia podróżna z herbem Jelita? i datą 1725"]]></AVal>
+				<AVal Column="5" Row="73"><![CDATA["1 280,00"]]></AVal>
+				<AVal Column="6" Row="73"><![CDATA["570,00"]]></AVal>
+				<AVal Column="7" Row="73"><![CDATA["870,00"]]></AVal>
+				<AVal Column="8" Row="73"><![CDATA["postument  regał  półka"]]></AVal>
+				<AVal Column="9" Row="73"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="74"><![CDATA["73,00"]]></AVal>
+				<AVal Column="2" Row="74"><![CDATA["MSiT/7375/M"]]></AVal>
+				<AVal Column="3" Row="74"><![CDATA["Kufer"]]></AVal>
+				<AVal Column="4" Row="74"><![CDATA["Kufer na buty "]]></AVal>
+				<AVal Column="5" Row="74"><![CDATA["460,00"]]></AVal>
+				<AVal Column="6" Row="74"><![CDATA["340,00"]]></AVal>
+				<AVal Column="7" Row="74"><![CDATA["320,00"]]></AVal>
+				<AVal Column="8" Row="74"><![CDATA["postument  regał  półka"]]></AVal>
+				<AVal Column="9" Row="74"><![CDATA["sala 2"]]></AVal>
+				<AVal Column="1" Row="75"><![CDATA["74,00"]]></AVal>
+				<AVal Column="2" Row="75"><![CDATA["MSiT/7801/M"]]></AVal>
+				<AVal Column="3" Row="75"><![CDATA["Sepecik"]]></AVal>
+				<AVal Column="4" Row="75"><![CDATA["Sepecik podróżny"]]></AVal>
+				<AVal Column="5" Row="75"><![CDATA["725,00"]]></AVal>
+				<AVal Column="6" Row="75"><![CDATA["460,00"]]></AVal>
+				<AVal Column="7" Row="75"><![CDATA["270,00"]]></AVal>
+				<AVal Column="8" Row="75"><![CDATA["postument  regał  półka"]]></AVal>
+				<AVal Column="9" Row="75"><![CDATA["sala 2"]]></AVal>
+			</ArrayValues>
+		</String>
+
+		<!-- obiekty_ac_A: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="obiekty_ac_A">
+			<Description><![CDATA["Dane"]]></Description>
+		</Title>
+		<Length Name="x">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="y">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="picw">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="pich">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<String Name="stLP">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["2"]]></Value>
+		</String>
+		<String Name="stNr_inwent">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["-"]]></Value>
+		</String>
+		<String Name="stNazwa">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Powóz Phaeton duński"]]></Value>
+		</String>
+		<Length Name="dWidth">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2.65</Value>
+		</Length>
+		<Length Name="dDepth">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1.63</Value>
+		</Length>
+		<Length Name="dHeight">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1.62</Value>
+		</Length>
+		<String Name="stRoom">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["0_18"]]></Value>
+		</String>
+		<String Name="stEkspozytorName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="stEkspozytorNr">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["0"]]></Value>
+		</String>
+		<String Name="stDescription">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Pokaż punkty aktywne 2D w 3D"]]></Description>
+			<Fix/>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Wzniesienie podstawy"]]></Description>
+			<Fix/>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Wzniesienie góry"]]></Description>
+			<Fix/>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+	</Parameters>
+</ParamSection>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author/>
+	<License>
+		<Type>CC0</Type>
+		<Version>1.0</Version>
+	</License>
+</Copyright>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+</Symbol>
