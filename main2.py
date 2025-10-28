@@ -6,14 +6,6 @@ import tempfile
 import platform
 import uuid
 
-#dest temp folder
-lp=os.path.dirname(__file__)
-folder_up=os.path.dirname(lp)
-TMP_FOLDER = os.path.join(lp, 'TMP')
-GSM_FOLDER = os.path.join(lp, 'GSM')
-# Create folders if they don't exist
-os.makedirs(TMP_FOLDER, exist_ok=True)
-os.makedirs(GSM_FOLDER, exist_ok=True)
 
 
 DARWIN  = 0
@@ -26,6 +18,8 @@ def whatPlatform():
         return WINDOWS
     if platform.system() == "Linux":
         return LINUX
+
+
 def converter_path():
     lp=os.path.dirname(__file__)
     if whatPlatform()==WINDOWS:
@@ -37,6 +31,20 @@ def converter_path():
     if whatPlatform()==DARWIN:
         path=os.path.join(lp,'OSX','MakeGDLLib_X86','LP_XMLConverter.app','Contents','MacOS','LP_XMLConverter')
     return path 
+
+
+#dest temp folder
+lp=os.path.dirname(__file__)
+folder_up=os.path.dirname(lp)
+TMP_FOLDER = os.path.join(lp, 'TMP')
+GSM_FOLDER = os.path.join(lp, 'GSM')
+if whatPlatform()==LINUX:
+    TMP_FOLDER = os.path.join(folder_up, 'TMP')
+    GSM_FOLDER = os.path.join(folder_up, 'GSM')
+# Create folders if they don't exist
+os.makedirs(TMP_FOLDER, exist_ok=True)
+os.makedirs(GSM_FOLDER, exist_ok=True)
+
 
 CONVERTER_PATH = converter_path()
 
