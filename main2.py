@@ -63,14 +63,24 @@ def read_root():
 def run_lpx():
     _command = [CONVERTER_PATH]
     if whatPlatform()==LINUX:_command.insert(0,'wine')
-    out = sub.check_output(_command)
-    return {"result": out}
+    proc = sub.run(_command, capture_output=True)
+    return {
+        "returncode": proc.returncode,
+        "stdout": proc.stdout.decode('utf-8', errors='replace'),
+        "stderr": proc.stderr.decode('utf-8', errors='replace'),
+        "command": _command
+    }
 @app.get("/help")
 def run_lpx_help():
     _command = [CONVERTER_PATH,'help']
     if whatPlatform()==LINUX:_command.insert(0,'wine')
-    out = sub.check_output(_command)
-    return {"result": out}
+    proc = sub.run(_command, capture_output=True)
+    return {
+        "returncode": proc.returncode,
+        "stdout": proc.stdout.decode('utf-8', errors='replace'),
+        "stderr": proc.stderr.decode('utf-8', errors='replace'),
+        "command": _command
+    }
 
 
 @app.post("/xml2lp")
@@ -83,8 +93,8 @@ async def xml2lp(
     toplatform: str = None, 
     def_file: str = None, 
     cur: str = None,
-    keepimagepath: bool = False, 
-    excludesvg: bool = False,
+    keepimagepath: bool = None, 
+    excludesvg: bool = None,
     copyright_author: str = None, 
     copyright_type: str = None,
     copyright_version: str = None, 
@@ -153,11 +163,17 @@ async def xml2lp(
     command.extend([actual_source, actual_dest])
     
     try:
-        out = sub.check_output(command)
+        proc = sub.run(command, capture_output=True)
         result = {
-            "result": out.decode('utf-8') if isinstance(out, bytes) else str(out),
-            "output_file": actual_dest
+            "returncode": proc.returncode,
+            "stdout": proc.stdout.decode('utf-8', errors='replace'),
+            "stderr": proc.stderr.decode('utf-8', errors='replace'),
+            "output_file": actual_dest,
+            "command": command
         }
+        # return 400 on failure for easier client-side handling
+        if proc.returncode != 0:
+            return result
         return result
     finally:
         # Clean up temporary source file if it was created
