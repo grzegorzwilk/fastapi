@@ -33,6 +33,25 @@ def converter_path():
     return path 
 
 
+def to_wine_path(posix_path: str) -> str:
+    """
+    Convert a POSIX path to a Windows path visible to Wine using `winepath -w`.
+    Fallback to Z: drive mapping if winepath is unavailable.
+    """
+    if whatPlatform() != LINUX:
+        return posix_path
+    try:
+        proc = sub.run(['winepath', '-w', posix_path], capture_output=True, check=False)
+        win_path = proc.stdout.decode('utf-8', errors='replace').strip()
+        if win_path:
+            return win_path
+    except Exception:
+        pass
+    # Fallback: naive Z: mapping
+    mapped = f"Z:{posix_path}"
+    return mapped.replace('/', '\\')
+
+
 #dest temp folder
 lp=os.path.dirname(__file__)
 folder_up=os.path.dirname(lp)
@@ -160,7 +179,10 @@ async def xml2lp(
     if password:
         command.extend(['-password', password])
     
-    command.extend([actual_source, actual_dest])
+    # On Linux/Wine the converter expects Windows-style paths
+    src_arg = to_wine_path(actual_source) if whatPlatform()==LINUX else actual_source
+    dst_arg = to_wine_path(actual_dest) if whatPlatform()==LINUX else actual_dest
+    command.extend([src_arg, dst_arg])
     
     try:
         proc = sub.run(command, capture_output=True)
@@ -169,7 +191,11 @@ async def xml2lp(
             "stdout": proc.stdout.decode('utf-8', errors='replace'),
             "stderr": proc.stderr.decode('utf-8', errors='replace'),
             "output_file": actual_dest,
-            "command": command
+            "command": command,
+            "args_used": {
+                "source": src_arg,
+                "dest": dst_arg
+            }
         }
         # return 400 on failure for easier client-side handling
         if proc.returncode != 0:
